@@ -57,9 +57,12 @@ class TicTacToe:
             self.res = ResDom.TIE
 
     def moveUser(self):
-        if self.status == Status.TURN_USER and self.board[self.uSelRow][self.uSelCol] == Sign.EMPTY:
-            self.makeMove(self.uSelRow, self.uSelCol, Sign.CROSS)
-            self.status = Status.TURN_COMP
+        if self.status == Status.TURN_USER:
+            if self.board[self.uSelRow][self.uSelCol] == Sign.EMPTY:
+                self.makeMove(self.uSelRow, self.uSelCol, Sign.CROSS)
+                self.status = Status.TURN_COMP
+            else:
+                print("Invalid move! The selected position is already occupied.")
 
     def moveComp(self):
         if self.status == Status.TURN_COMP:
@@ -87,8 +90,16 @@ class TicTacToe:
             self.displayBoard()
             if self.status == Status.TURN_USER:
                 print("Your turn")
-                self.uSelRow = int(input("Enter row (0, 1, 2): "))
-                self.uSelCol = int(input("Enter column (0, 1, 2): "))
+                while True:
+                    try:
+                        self.uSelRow = int(input("Enter row (0, 1, 2): "))
+                        self.uSelCol = int(input("Enter column (0, 1, 2): "))
+                        if 0 <= self.uSelRow <= 2 and 0 <= self.uSelCol <= 2:
+                            break
+                        else:
+                            print("Invalid input! Row and column must be between 0 and 2.")
+                    except ValueError:
+                        print("Invalid input! Please enter integers for row and column.")
                 self.action = ActionDomain.U_MOVE
             else:
                 print("Computer's turn")
