@@ -50,17 +50,25 @@ class TicTacToe:
         return False
 
     def makeMove(self, r, c, s):
-        self.board[r][c] = s
-        self.numOfMoves += 1
+        if self.board[0][c] != Sign.EMPTY:
+            print("Column is full. Please choose another column.")
+            return False
 
-        # Check whether game state has to change
-        if self.winOnRow(r, c, s) or self.winOnCol(r, c, s) or self.winOnDiag(r, c, s):
-            if s == Sign.CROSS:
-                self.res = ResDom.U_WON
-            elif s == Sign.NOUGHT:
-                self.res = ResDom.C_WON
-        elif self.numOfMoves == 9:
-            self.res = ResDom.TIE
+        # Find the lowest empty cell in the selected column
+        for row in range(2, -1, -1):
+            if self.board[row][c] == Sign.EMPTY:
+                self.board[row][c] = s
+                self.numOfMoves += 1
+
+                # Check whether game state has to change
+                if self.winOnRow(row, c, s) or self.winOnCol(row, c, s) or self.winOnDiag(row, c, s):
+                    if s == Sign.CROSS:
+                        self.res = ResDom.U_WON
+                    elif s == Sign.NOUGHT:
+                        self.res = ResDom.C_WON
+                elif self.numOfMoves == 9:
+                    self.res = ResDom.TIE
+                return True
 
     def moveUser(self):
         if self.status == Status.TURN_USER:
@@ -123,7 +131,7 @@ class TicTacToe:
 
 
 # Initialize game
-# game = TicTacToe()
+game = TicTacToe()
 
 # Run game
-# game.play()
+game.play()
