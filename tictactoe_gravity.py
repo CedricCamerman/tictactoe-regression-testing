@@ -24,7 +24,7 @@ class ResDom(Enum):
     C_WON = 3
     TIE = 4
 
-class TicTacToe:
+class TicTacToeGravity:
     def __init__(self):
         self.board = [[Sign.EMPTY] * 3 for _ in range(3)]
         self.status = Status.TURN_USER  # User starts
@@ -94,44 +94,44 @@ class TicTacToe:
             else:
                 self.moveComp()
     
-    def displayBoard(self):
-        for row in self.board:
-            print("|".join([sign.value for sign in row]))
-            print("-" * 5)
+#     def displayBoard(self):
+#         for row in self.board:
+#             print("|".join([sign.value for sign in row]))
+#             print("-" * 5)
 
-    # Play loop; runs until game state is not PLAYING
-    def play(self):
-        print("Welcome to Tic-Tac-Toe!")
-        while self.res == ResDom.PLAYING:
-            self.displayBoard()
-            if self.status == Status.TURN_USER:
-                print("Your turn")
-                while True:
-                    try:
-                        self.uSelRow = int(input("Enter row (0, 1, 2): "))
-                        self.uSelCol = int(input("Enter column (0, 1, 2): "))
-                        if 0 <= self.uSelRow <= 2 and 0 <= self.uSelCol <= 2:
-                            break
-                        else:
-                            print("Invalid input! Row and column must be between 0 and 2.")
-                    except ValueError:
-                        print("Invalid input! Please enter integers for row and column.")
-                self.action = ActionDomain.U_MOVE
-            else:
-                print("Computer's turn")
-                self.action = ActionDomain.C_MOVE
-            self.main()
-        self.displayBoard()
-        if self.res == ResDom.U_WON:
-            print("Congratulations! You won!")
-        elif self.res == ResDom.C_WON:
-            print("Computer wins!")
-        else:
-            print("It's a tie!")
+#     # Play loop; runs until game state is not PLAYING
+#     def play(self):
+#         print("Welcome to Tic-Tac-Toe!")
+#         while self.res == ResDom.PLAYING:
+#             self.displayBoard()
+#             if self.status == Status.TURN_USER:
+#                 print("Your turn")
+#                 while True:
+#                     try:
+#                         self.uSelRow = int(input("Enter row (0, 1, 2): "))
+#                         self.uSelCol = int(input("Enter column (0, 1, 2): "))
+#                         if 0 <= self.uSelRow <= 2 and 0 <= self.uSelCol <= 2:
+#                             break
+#                         else:
+#                             print("Invalid input! Row and column must be between 0 and 2.")
+#                     except ValueError:
+#                         print("Invalid input! Please enter integers for row and column.")
+#                 self.action = ActionDomain.U_MOVE
+#             else:
+#                 print("Computer's turn")
+#                 self.action = ActionDomain.C_MOVE
+#             self.main()
+#         self.displayBoard()
+#         if self.res == ResDom.U_WON:
+#             print("Congratulations! You won!")
+#         elif self.res == ResDom.C_WON:
+#             print("Computer wins!")
+#         else:
+#             print("It's a tie!")
 
 
-# Initialize game
-game = TicTacToe()
+# # Initialize game
+# game = TicTacToeGravity()
 
-# Run game
-game.play()
+# # Run game
+# game.play()
