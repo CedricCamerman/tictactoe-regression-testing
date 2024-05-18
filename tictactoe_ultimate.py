@@ -53,7 +53,7 @@ class UltimateTicTacToe:
                 self.res = ResDom.U_WON
             elif s == Sign.NOUGHT:
                 self.res = ResDom.C_WON
-        elif self.numOfMoves == 81:
+        elif self.numOfMoves == 81 or all(self.board[br][bc].res != ResDom.PLAYING for br in range(3) for bc in range(3)):
             self.res = ResDom.TIE
 
     def moveUser(self):

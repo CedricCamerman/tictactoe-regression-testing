@@ -95,7 +95,8 @@ class TicTacToe3P:
                 self.makeMove(r, c, Sign.NOUGHT)
                 self.status = Status.TURN_COMP2
 
-        if self.status == Status.TURN_COMP2:
+
+        elif self.status == Status.TURN_COMP2:
             empty_cells = [(r, c) for r in range(4) for c in range(4) if self.board[r][c] == Sign.EMPTY]
             if empty_cells:
                 r, c = random.choice(empty_cells)
