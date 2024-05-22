@@ -128,12 +128,16 @@ def test_suite(num_runs):
             assert game.res == ResDom.TIE or any(game.winOnRow(r, c, s) or game.winOnCol(r, c, s) or game.winOnDiag(r, c, s) for r in range(4) for c in range(4) for s in {Sign.CROSS, Sign.NOUGHT, Sign.BAR}), "Invalid end state"
             sc_passed += 1
             if game.res == ResDom.U_WON:
+                assert (game.winOnCol(r, c, Sign.CROSS) or game.winOnRow(r, c, Sign.CROSS) or game.winOnDiag(r, c, Sign.CROSS) for r in range(4) for c in range(4)), "User won but no winning row, column or diagonal"
                 user_won += 1
             elif game.res == ResDom.C1_WON:
+                assert (game.winOnCol(r, c, Sign.NOUGHT) or game.winOnRow(r, c, Sign.NOUGHT) or game.winOnDiag(r, c, Sign.NOUGHT) for r in range(4) for c in range(4)), "CPU1 won but no winning row, column or diagonal"
                 cpu1_won += 1
             elif game.res == ResDom.C2_WON:
+                assert (game.winOnCol(r, c, Sign.BAR) or game.winOnRow(r, c, Sign.BAR) or game.winOnDiag(r, c, Sign.BAR) for r in range(4) for c in range(4)), "CPU2 won but no winning row, column or diagonal"
                 cpu2_won += 1
             elif game.res == ResDom.TIE:
+                assert all(cell != Sign.EMPTY for row in game.board for cell in row), "Tie but empty cells still exist"
                 tie += 1
         except AssertionError as e:
             print(f"Test failed with error: {str(e)}")
