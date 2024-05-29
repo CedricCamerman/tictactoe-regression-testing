@@ -26,7 +26,7 @@ class ResDom(Enum):
     U_WON = 2
     C1_WON = 3
     C2_WON = 4
-    TIE = 4
+    TIE = 5
 
 # Tic-Tac-Toe game class
 class TicTacToe3P:
