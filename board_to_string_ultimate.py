@@ -1,7 +1,33 @@
 from tictactoe_ultimate import Sign, Status, ActionDomain, ResDom
 
-def board_to_string(board):
+def board_to_stringa(board):
     # Convert the board to a string representation on a single line. empty = '_', cross = 'X', nought = 'O'
+    board_str = ''
+    for row in board:
+        for cell in row:
+            if cell == Sign.EMPTY:
+                board_str += '_'  # empty cell
+            elif cell == Sign.CROSS:
+                board_str += 'X'
+            else:
+                board_str += 'O'
+    return board_str
+
+def board_to_stringb(result):
+    # Convert the board to a string representation on a single line.
+    board_str = ''
+    if result == ResDom.PLAYING:
+        board_str += '_'  # empty cell
+    elif result == ResDom.U_WON:
+        board_str += 'X'
+    elif result == ResDom.C_WON:
+        board_str += 'O'
+    else: # draw
+        board_str += '-'
+    return board_str
+
+def board_to_stringc(board):
+    # Convert the board to a string representation on a single line.
     board_str = ''
     for row in board:
         for cell in row:

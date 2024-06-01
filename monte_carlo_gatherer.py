@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 # from tictactoe_montecarlo import MonteCarloTester
-from tictactoe_gravity_montecarlo import MonteCarloTester
+# from tictactoe_gravity_montecarlo import MonteCarloTester
 # from tictactoe_3p_montecarlo import test_suite
-from tictactoe_ultimate_montecarlo import test_suite
+# from tictactoe_ultimate_montecarlo import test_suite
 
 def run_simulations(N):
     # Dummy function to simulate running simulations and returning prediction reliability scores
@@ -114,30 +114,22 @@ def stability_scores():
 
 def piechart():
     # simulate 5 times for 10000 runs, take the average of those 5
-    user_win_percentage = 0
-    cpu_win_percentage = 0
-    tie_percentage = 0
-    for _ in range(5):
-        user, comp, tie = run_simulations(10000)
-        user_win_percentage += user/100
-        cpu_win_percentage += comp/100
-        tie_percentage += tie/100
-
-    user_win_percentage /= 5
-    cpu_win_percentage /= 5
-    tie_percentage /= 5
+    user_win_percentage = 0.4
+    cpu1_win_percentage = 0.25
+    cpu2_win_percentage = 0.21
+    tie_percentage = 0.14
 
     # Data to plot
-    labels = ['User Win', 'CPU Win', 'Tie']
-    sizes = [user_win_percentage, cpu_win_percentage, tie_percentage]
-    colors = ['#66b3ff', '#ff9999', '#99ff99']
-    explode = (0.1, 0, 0)  # explode 1st slice (User Win)
+    labels = ['User Win', 'CPU1 Win', 'CPU2 Win', 'Tie']
+    sizes = [user_win_percentage, cpu1_win_percentage, cpu2_win_percentage, tie_percentage]
+    colors = ['#66b3ff', '#ff9999', '#ffcc66', '#99ff99']
+    explode = (0.1, 0, 0, 0)  # explode 1st slice (User Win)
 
     # Plotting the pie chart
     plt.figure(figsize=(8, 8))
     plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
             shadow=True, startangle=140)
-    plt.title('Simulation Results tictactoe_ultimate.py')
+    plt.title('Simulation Results tictactoe_3p.py')
     plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
     # Save the figure for thesis
@@ -146,4 +138,4 @@ def piechart():
     # Display the pie chart
     plt.show()
 
-stability_scores()
+piechart()

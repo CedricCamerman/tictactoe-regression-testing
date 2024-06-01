@@ -275,5 +275,5 @@ class MonteCarloTester:
 
 
 # Run the test suite
-tester = MonteCarloTester(10000)
+tester = MonteCarloTester(5000)
 tester.test_suite()

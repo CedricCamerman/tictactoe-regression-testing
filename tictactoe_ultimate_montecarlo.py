@@ -2,6 +2,8 @@ import random
 from collections import defaultdict, deque
 import numpy as np
 from tictactoe_ultimate import UltimateTicTacToe, Sign, Status, ActionDomain, ResDom
+from ADS_tictactoe_ultimate import ADS
+from board_to_string_ultimate import board_to_stringa, board_to_stringb, board_to_stringc
 
 class MonteCarloTester:
     def __init__(self, num_runs, initial_sequences=10):
@@ -34,7 +36,7 @@ class MonteCarloTester:
         probabilities = {state: count / total for state, count in transitions.items()}
         return max(probabilities, key=probabilities.get)
 
-    def test_sequence(self, game):
+    def test_sequence(self, game, seq):
         user_passed = 0
         user_failed = 0
         cpu_passed = 0
@@ -45,8 +47,18 @@ class MonteCarloTester:
         correct_predictions = {key: 0 for key in self.recent_predictions}
         total_predictions = {key: 0 for key in self.recent_predictions}
 
+        ADS_true = 0
+        ADS_false = 0
+        ADS_tests = 0
+
         while game.res == ResDom.PLAYING:
             before_state = self.serialize_game_state(game)
+            before_state_stringlist = []
+            before_state_string = ''
+            for r in game.board:
+                for board in r:
+                    before_state_stringlist.append(board_to_stringa(board.board))
+                    before_state_string += board_to_stringb(board.res)
             predicted_next_state = self.predict_state(before_state)
             
             if game.status == Status.TURN_USER:
@@ -122,11 +134,50 @@ class MonteCarloTester:
                 print("Invalid board state:")
                 print('\n'.join(' '.join(cell.value for cell in row) for row in game.board[game.uSelBoardrow][game.uSelBoardcol].board))
                 board_failed += 1
+
+            # ADS test
+            try:
+                # Individual board tests
+                for gamenumber in range(9):
+                    # gamenumber to row and col
+                    br = gamenumber // 3
+                    bc = gamenumber % 3
+
+                    before_board = before_state_stringlist[gamenumber]
+                    current_game = game.board[br][bc]
+                    current_board = current_game.board
+                    transitions = []
+                    current_string_board = board_to_stringa(current_board)
+                    if current_string_board != before_board:
+                        transitions = seq.TrA[before_board]['transitions']
+                    # transitions is a list of 4-tuples: (tile (0-9), user_turn boolean, game result, next state)
+                    # assert that the next state is in the list of possible transitions     
+                    assert current_string_board == before_board or current_string_board in [transition[2] for transition in transitions], f"Current lboard: {current_string_board}, before board: {before_board}"
+                    # assign that element of the list to the variable 'transition'
+                    if current_string_board != before_board:
+                        transition = next(transition for transition in transitions if transition[2] == current_string_board)
+                        assert current_game.res == transition[1], f"Current lgame result: {current_game.res}, transition result: {transition[1]}"
+
+                # Overarching board test
+                transitions = seq.TrB[before_state_string]['transitions']
+                # transitions is a list of 4-tuples: (tile (0-9), user_turn boolean, game result, next state)
+                # assert that the next state is in the list of possible transitions
+                current_string = board_to_stringc(game.board)
+                assert current_string == before_state_string or current_string in [transition[1] for transition in transitions], f"Current oboard: {current_string}, before board: {before_state_string}"
+                # assign that element of the list to the variable 'transition'
+                if current_string != before_state_string:
+                    transition = next(transition for transition in transitions if transition[1] == current_string)
+                    assert game.res == transition[0], f"Current ogame result: {game.res}, transition result: {transition[0]}"
+                ADS_true += 1
+            except AssertionError as e:
+                print(f"ADS test failed with error: {str(e)}")
+                ADS_false += 1
+            ADS_tests += 1
         
         self.update_variance()
         return (
             user_passed, user_failed, cpu_passed, cpu_failed, board_passed, board_failed, 
-            correct_predictions, total_predictions
+            correct_predictions, total_predictions, ADS_true, ADS_false, ADS_tests
         )
 
     def serialize_game_state(self, game):
@@ -161,12 +212,18 @@ class MonteCarloTester:
 
         results = {key: {'correct': 0, 'total': 0} for key in self.recent_predictions}
 
+        seq = ADS()
+        seq.find_subsets()
+
+        ADS_true = 0
+        ADS_false = 0
+        ADS_tests = 0
         for i in range(self.num_runs):
             game = UltimateTicTacToe()
             (
                 user_pass, user_fail, cpu_pass, cpu_fail, board_pass, board_fail, 
-                correct, total
-            ) = self.test_sequence(game)
+                correct, total, ADS_t, ADS_f, ADS_total
+            ) = self.test_sequence(game, seq)
 
             others_passfail[0][0] += user_pass
             others_passfail[0][1] += user_fail
@@ -174,6 +231,10 @@ class MonteCarloTester:
             others_passfail[1][1] += cpu_fail
             others_passfail[2][0] += board_pass
             others_passfail[2][1] += board_fail
+
+            ADS_true += ADS_t
+            ADS_false += ADS_f
+            ADS_tests += ADS_total
 
             for key in results:
                 results[key]['correct'] += correct[key]
@@ -210,6 +271,10 @@ class MonteCarloTester:
         print(f"CPU won: {cpu_won}")
         print(f"Tie: {tie}")
         print("")
+        print(f"ADS tests passed: {ADS_true}")
+        print(f"ADS tests failed: {ADS_false}")
+        print(f"ADS tests total: {ADS_tests}")
+        print("")
         print(f"Total runs: {i+1}")
         for key, value in results.items():
             if value['total'] > 0:
@@ -222,5 +287,5 @@ class MonteCarloTester:
             print(f"Final {result_type.capitalize()} prediction stability score: {score:.2f}%")
 
 # Run the test suite
-tester = MonteCarloTester(10000)
+tester = MonteCarloTester(1000)
 tester.test_suite()

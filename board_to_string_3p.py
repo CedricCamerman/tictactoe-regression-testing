@@ -17,15 +17,17 @@ def board_to_string(board):
 
 # string to board
 def string_to_board(board_str):
-    # Convert the string representation of the board to a 3x3 list
-    board = [[Sign.EMPTY] * 3 for _ in range(3)]
+    # Convert the string representation of the board to a 4x4 list
+    board = [[Sign.EMPTY] * 4 for _ in range(4)]
     for i, cell in enumerate(board_str):
-        row = i // 3
-        col = i % 3
+        row = i // 4
+        col = i % 4
         if cell == '_':
             board[row][col] = Sign.EMPTY
         elif cell == 'X':
             board[row][col] = Sign.CROSS
-        else:
+        elif cell == 'O':
             board[row][col] = Sign.NOUGHT
+        else:
+            board[row][col] = Sign.BAR
     return board

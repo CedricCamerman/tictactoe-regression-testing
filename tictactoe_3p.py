@@ -54,14 +54,22 @@ class TicTacToe3P:
                 return True
         return False
 
-    # Check whether a player has won on a diagonal, only three in a row needed
+    # Check whether a player has won on a diagonal, only three in a row needed. There are six diagonals to win on in a 4x4 board.
     def winOnDiag(self, r, c, s):
-        if r == c or r + c == 3:
-            for i in range(2):
-                if all(self.board[j][j] == s for j in range(i, i + 3)):
-                    return True
-                if all(self.board[j][3 - j] == s for j in range(i, i + 3)):
-                    return True
+        # Top-left to bottom-right
+        if (self.board[0][1] == s and self.board[1][2] == s and self.board[2][3] == s) or \
+           (self.board[0][0] == s and self.board[1][1] == s and self.board[2][2] == s) or \
+           (self.board[1][1] == s and self.board[2][2] == s and self.board[3][3] == s) or \
+           (self.board[1][0] == s and self.board[2][1] == s and self.board[3][2] == s):
+            return True
+        
+        # Bottom-left to top-right
+        if (self.board[2][0] == s and self.board[1][1] == s and self.board[0][2] == s) or \
+           (self.board[3][0] == s and self.board[2][1] == s and self.board[1][2] == s) or \
+           (self.board[2][1] == s and self.board[1][2] == s and self.board[0][3] == s) or \
+           (self.board[3][1] == s and self.board[2][2] == s and self.board[1][3] == s):
+            return True
+
         return False
 
     def makeMove(self, r, c, s):

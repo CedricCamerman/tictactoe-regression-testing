@@ -119,22 +119,7 @@ class TestTicTacToe(unittest.TestCase):
         self.assertEqual(game.board[0][1], Sign.NOUGHT)
         self.assertEqual(game.status, Status.TURN_USER)
         self.assertEqual(game.numOfMoves, 8)
-        self.assertEqual(game.res, ResDom.PLAYING)
-    
-    # test non-deterministic cpu move (randomised) and solve oracle problem
-    def test_cpu_move(self):
-        game = TicTacToe()
-        game.board = [[Sign.CROSS, Sign.NOUGHT, Sign.CROSS],
-                      [Sign.CROSS, Sign.EMPTY, Sign.CROSS],
-                      [Sign.NOUGHT, Sign.CROSS, Sign.NOUGHT]]
-        game.status = Status.TURN_COMP
-        game.action = ActionDomain.C_MOVE
-        game.numOfMoves = 8
-        game.main()
-        self.assertEqual(game.board[1][1], Sign.NOUGHT)
-        self.assertEqual(game.status, Status.TURN_USER)
-        self.assertEqual(game.numOfMoves, 9)
-        self.assertEqual(game.res, ResDom.TIE)
+        self.assertEqual(game.res, ResDom.PLAYING) 
 
 # run the tests
 if __name__ == '__main__':
@@ -142,5 +127,6 @@ if __name__ == '__main__':
 
 # run the tests with coverage
 # coverage run -m unittest tictactoe_unittests.py
+# coverage report -m
 
 

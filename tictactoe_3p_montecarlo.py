@@ -2,6 +2,9 @@ import random
 from collections import defaultdict, deque
 import numpy as np
 from tictactoe_3p import TicTacToe3P, Sign, Status, ActionDomain, ResDom
+from ADS_tictactoe_3p import ADS
+from board_to_string_3p import board_to_string, string_to_board
+import random
 
 class MonteCarloTester:
     def __init__(self, num_runs, initial_sequences=10):
@@ -162,6 +165,80 @@ class MonteCarloTester:
                 mean_variance = np.mean(variances)
                 stability_scores[key] = 100 - (mean_variance * 100)  # Convert variance to a reliability score
         return stability_scores
+    
+    def simulate_ADS(self, seq):
+        ADS_true = 0
+        ADS_false = 0
+        ADS_tests = 0
+
+        # initial step test
+        game = TicTacToe3P()
+        before_state_string = board_to_string(game.board)
+        game.uSelRow, game.uSelCol = random.choice([(r, c) for r in range(4) for c in range(4) if game.board[r][c] == Sign.EMPTY])
+        game.action = ActionDomain.U_MOVE
+
+        game.main()
+
+        try:
+            transitions = seq.TrA_trails[before_state_string]['transitions']
+            # transitions is a list of 4-tuples: (tile (0-9), user_turn boolean, game result, next state)
+            # assert that the next state is in the list of possible transitions
+            assert board_to_string(game.board) in [transition[3] for transition in transitions]
+            # assign that element of the list to the variable 'transition'
+            transition = next(transition for transition in transitions if transition[3] == board_to_string(game.board))
+            if transition[1] == 0:
+                assert game.status == Status.TURN_COMP1
+                assert (4 * game.uSelRow + game.uSelCol) == transition[0]
+            elif transition[1] == 1:
+                assert game.status == Status.TURN_COMP2
+            else:
+                assert game.status == Status.TURN_USER
+            assert game.res == transition[2]
+            ADS_true += 1
+        except AssertionError:
+            print(f"ADS test failed for state: {before_state_string} and transitions: {transitions}")
+            ADS_false += 1
+        ADS_tests += 1
+
+        # simulation step
+        # find a random transition that has 7 empty tiles
+        start_key = random.choice(seq.keylist)
+        game.board = string_to_board(start_key)
+        game.status = Status.TURN_USER
+        game.numOfMoves = 9
+        while game.res == ResDom.PLAYING:
+            before_state_string = board_to_string(game.board)            
+            if game.status == Status.TURN_USER:
+                game.uSelRow, game.uSelCol = random.choice([(r, c) for r in range(4) for c in range(4) if game.board[r][c] == Sign.EMPTY])
+                game.action = ActionDomain.U_MOVE
+            elif game.status == Status.TURN_COMP1:
+                game.action = ActionDomain.C1_MOVE
+            else:
+                game.action = ActionDomain.C2_MOVE
+            game.main()
+
+            try:
+                transitions = seq.TrA[before_state_string]['transitions']
+                # transitions is a list of 4-tuples: (tile (0-9), user_turn boolean, game result, next state)
+                # assert that the next state is in the list of possible transitions
+                assert board_to_string(game.board) in [transition[3] for transition in transitions]
+                # assign that element of the list to the variable 'transition'
+                transition = next(transition for transition in transitions if transition[3] == board_to_string(game.board))
+                if transition[1] == 0:
+                    assert game.status == Status.TURN_COMP1
+                    assert (4 * game.uSelRow + game.uSelCol) == transition[0]
+                elif transition[1] == 1:
+                    assert game.status == Status.TURN_COMP2
+                else:
+                    assert game.status == Status.TURN_USER
+                assert game.res == transition[2]
+                ADS_true += 1
+            except AssertionError:
+                print(f"ADS test failed for state: {before_state_string} and transitions: {transitions}")
+                ADS_false += 1
+            ADS_tests += 1
+        
+        return ADS_true, ADS_false, ADS_tests
 
     def test_suite(self):
         sc_passed = 0
@@ -174,12 +251,23 @@ class MonteCarloTester:
 
         results = {key: {'correct': 0, 'total': 0} for key in self.recent_predictions}
 
+        seq = ADS()
+        seq.find_subsets()
+
+        ADS_true = 0
+        ADS_false = 0
+        ADS_tests = 0
+
         for i in range(self.num_runs):
             game = TicTacToe3P()
             (
                 user_pass, user_fail, cpu1_pass, cpu1_fail, cpu2_pass, cpu2_fail, board_pass, board_fail, 
                 correct, total
             ) = self.test_sequence(game)
+
+            (
+                ADS_t, ADS_f, ADS_total
+            ) = self.simulate_ADS(seq)
 
             others_passfail[0][0] += user_pass
             others_passfail[0][1] += user_fail
@@ -194,6 +282,9 @@ class MonteCarloTester:
                 results[key]['correct'] += correct[key]
                 results[key]['total'] += total[key]
 
+            ADS_true += ADS_t
+            ADS_false += ADS_f
+            ADS_tests += ADS_total
             try:
                 # Check if the game ended in a valid state
                 assert game.res in {ResDom.U_WON, ResDom.C1_WON, ResDom.C2_WON, ResDom.TIE}, "Invalid end state"
@@ -229,6 +320,10 @@ class MonteCarloTester:
         print(f"CPU1 won: {cpu1_won}")
         print(f"CPU2 won: {cpu2_won}")
         print(f"Tie: {tie}")
+        print("")
+        print(f"ADS tests passed: {ADS_true}")
+        print(f"ADS tests failed: {ADS_false}")
+        print(f"ADS tests total: {ADS_tests}")
         print("")
         print(f"Total runs: {i+1}")
         rel_values = []

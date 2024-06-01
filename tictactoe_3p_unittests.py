@@ -42,10 +42,10 @@ class TestTicTacToe3P(unittest.TestCase):
     def test_win_on_diag_opposite(self):
         game = TicTacToe3P()
         game.board = [[Sign.EMPTY, Sign.EMPTY, Sign.EMPTY, Sign.EMPTY],
+                      [Sign.EMPTY, Sign.EMPTY, Sign.EMPTY, Sign.CROSS],
                       [Sign.EMPTY, Sign.EMPTY, Sign.CROSS, Sign.EMPTY],
-                      [Sign.EMPTY, Sign.CROSS, Sign.EMPTY, Sign.EMPTY],
-                      [Sign.CROSS, Sign.EMPTY, Sign.EMPTY, Sign.EMPTY]]
-        self.assertTrue(game.winOnDiag(3, 0, Sign.CROSS))
+                      [Sign.EMPTY, Sign.CROSS, Sign.EMPTY, Sign.EMPTY]]
+        self.assertTrue(game.winOnDiag(3, 1, Sign.CROSS))
 
     # test tie
     def test_tie(self):

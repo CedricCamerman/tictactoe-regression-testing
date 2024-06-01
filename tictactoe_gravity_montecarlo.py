@@ -267,6 +267,6 @@ class MonteCarloTester:
         # return rel_values
         return stab_values
 
-# # Run the test suite
-tester = MonteCarloTester(2000)
-tester.test_suite()
+# Run the test suite
+# tester = MonteCarloTester(5000)
+# tester.test_suite()

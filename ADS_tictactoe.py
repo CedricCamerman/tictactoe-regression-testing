@@ -1,4 +1,3 @@
-import copy
 from board_to_string import string_to_board
 from tictactoe import ActionDomain, ResDom
 import itertools
@@ -7,10 +6,6 @@ class ADS:
     def __init__(self):
         self.Q0 = '_________'
         self.TrA = {}
-
-    def initialize_Q0(self):
-        all_combinations = [''.join(combination) for combination in itertools.product('XO_', repeat=9)]
-        return all_combinations
 
     def find_subsets(self):
         Qk = [self.Q0]
@@ -72,44 +67,6 @@ class ADS:
         else:
             return ResDom.PLAYING
   
-    def display_metrics(self):
-        num_states = len(self.P)
-        num_transitions = sum(len(self.P[state]['transitions']) for state in self.P.keys())
-        output_complete = all(
-            all(output in {trans[1] for trans in self.P[state]['transitions']} for output in ResDom)
-            for state in self.P.keys() if len(self.P[state]['transitions']) > 0
-        )
-        print(f"Number of states in P: {num_states}")
-        print(f"Number of transitions in P: {num_transitions}")
-        print(f"Is output-complete: {output_complete}")
-
-    def run_test_case(self, tictactoe_game):
-        correct_count = 0
-        incorrect_count = 0
-        for state in self.P.keys():
-            for (move, expected_output, next_state) in self.P[state]['transitions']:
-                tictactoe_game.board = copy.deepcopy(string_to_board(state))
-                tictactoe_game.uSelRow, tictactoe_game.uSelCol = move
-                tictactoe_game.main()
-                if tictactoe_game.res == ResDom.PLAYING:
-                    tictactoe_game.action = ActionDomain.C_MOVE
-                    tictactoe_game.main()
-                if tictactoe_game.res != expected_output:
-                    incorrect_count += 1
-                    print(f"Test failed for move {move} from state {state}. Expected {expected_output}, got {tictactoe_game.res}")
-                else:
-                    correct_count += 1
-                    print(f"Test passed for move {move} from state {state}. Expected {expected_output}, got {tictactoe_game.res}")
-        
-        total_tests = correct_count + incorrect_count
-        accuracy = correct_count / total_tests if total_tests > 0 else 0
-
-        print(f"Total tests run: {total_tests}")
-        print(f"Correct outputs: {correct_count}")
-        print(f"Incorrect outputs: {incorrect_count}")
-        print(f"Accuracy: {accuracy * 100:.2f}%")
 
 # ab = ADS()
 # ab.find_subsets()
-# ab.display_metrics()
-# # ab.run_test_case(TicTacToe())
