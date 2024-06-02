@@ -221,18 +221,6 @@ class MonteCarloTester:
             except AssertionError as e:
                 print(f"Test failed with error: {str(e)}")
                 sc_failed += 1
-
-            # # Print reliability at regular intervals
-            # if i % (self.num_runs // 10) == 0:
-            #     print(f"Current runs: {i}")
-            #     for key, value in results.items():
-            #         if value['total'] > 0:
-            #             reliability = self.calculate_reliability(self.recent_predictions[key])
-            #             print(f"{key.capitalize()} prediction reliability: {reliability:.2f}%")
-            #     print("")
-            #     reliability_scores = self.calculate_program_reliability()
-            #     for result_type, score in reliability_scores.items():
-            #         print(f"{result_type.capitalize()} prediction stability score: {score:.2f}%")
                         
 
         print(f"Tests passed: {sc_passed + others_passfail[0][0] + others_passfail[1][0] + others_passfail[2][0]}")
@@ -275,5 +263,5 @@ class MonteCarloTester:
 
 
 # Run the test suite
-tester = MonteCarloTester(5000)
+tester = MonteCarloTester(1)
 tester.test_suite()

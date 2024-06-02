@@ -287,5 +287,5 @@ class MonteCarloTester:
             print(f"Final {result_type.capitalize()} prediction stability score: {score:.2f}%")
 
 # Run the test suite
-tester = MonteCarloTester(1000)
+tester = MonteCarloTester(10000)
 tester.test_suite()

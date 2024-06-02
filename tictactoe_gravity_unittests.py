@@ -1,6 +1,7 @@
 # imports
 import unittest
-from tictactoe_gravity import TicTacToeGravity, Sign, Status, ResDom, ActionDomain
+from tictactoe_gravity_states import Sign, Status, ActionDomain, ResDom
+from tictactoe_gravity import TicTacToeGravity
 
 class TestTicTacToeGravity(unittest.TestCase):
     # test tictactoe gravity board initialization

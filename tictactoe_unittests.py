@@ -1,6 +1,7 @@
 # import libraries for unit tests
 import unittest
-from tictactoe import ActionDomain, ResDom, Sign, Status, TicTacToe
+from tictactoe_states import Sign, Status, ActionDomain, ResDom
+from tictactoe import TicTacToe
 
 # create a test class
 class TestTicTacToe(unittest.TestCase):
@@ -121,7 +122,7 @@ class TestTicTacToe(unittest.TestCase):
         self.assertEqual(game.numOfMoves, 8)
         self.assertEqual(game.res, ResDom.PLAYING) 
 
-# run the tests
+# # run the tests
 if __name__ == '__main__':
     unittest.main()
 

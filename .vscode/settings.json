@@ -1,0 +1,12 @@
+{
+    "terminal.integrated.env.windows": {
+      "PYNGUIN_DANGER_AWARE": "1"
+    },
+    "terminal.integrated.env.linux": {
+      "PYNGUIN_DANGER_AWARE": "1"
+    },
+    "terminal.integrated.env.osx": {
+      "PYNGUIN_DANGER_AWARE": "1"
+    }
+  }
+  

@@ -52,7 +52,14 @@ class ADS:
                                     Pj_plus_1.append(successor)
                                 self.TrB[B]['transitions'].append((s_output, successor))
             if len(Pj_plus_1) == 0:
-                print(f"Time taken: {time.time() - start_time}")
+                print(f"Time taken: {time.time() - start_time}, ads length lower boards: {len(self.TrA)}, ads length upper boards: {len(self.TrB)}")
+                total_transitions_l = 0
+                total_transitions_u = 0
+                for key in self.TrA:
+                    total_transitions_l += len(self.TrA[key]['transitions'])
+                for key in self.TrB:
+                    total_transitions_u += len(self.TrB[key]['transitions'])
+                print(f"Total transitions lower boards: {total_transitions_l}, Total transitions upper boards: {total_transitions_u}")
                 break
 
             Pk = Pj_plus_1

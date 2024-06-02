@@ -1,4 +1,3 @@
-from enum import Enum
 import random
 
 from tictactoe import TicTacToe, Sign, Status, ActionDomain, ResDom

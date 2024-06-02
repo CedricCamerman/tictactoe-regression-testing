@@ -1,7 +1,7 @@
 # import ultimate tictactoe unittests
 import unittest
 from tictactoe_ultimate import UltimateTicTacToe
-from tictactoe import TicTacToe, Sign, Status, ActionDomain, ResDom
+from tictactoe import Sign, Status, ActionDomain, ResDom
 
 class TestUltimateTicTacToe(unittest.TestCase):
     # test ultimate tictactoe board initialization

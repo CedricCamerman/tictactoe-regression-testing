@@ -1,6 +1,4 @@
-from board_to_string import string_to_board
-from tictactoe import ActionDomain, ResDom
-import itertools
+from tictactoe import ResDom
 
 class ADS:
     def __init__(self):
