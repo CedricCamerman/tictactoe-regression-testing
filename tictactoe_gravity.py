@@ -2,6 +2,7 @@ from tictactoe_gravity_states import Sign, Status, ActionDomain, ResDom
 import random
 
 
+# Tic-Tac-Toe game with gravity
 class TicTacToeGravity:
     def __init__(self):
         self.board = [[Sign.EMPTY] * 3 for _ in range(3)]
@@ -12,6 +13,7 @@ class TicTacToeGravity:
         self.res = ResDom.PLAYING
         self.numOfMoves = 0
 
+    # Winning conditions
     def winOnRow(self, r, c, s):
         return all(self.board[r][col] == s for col in range(3))
 
@@ -27,6 +29,7 @@ class TicTacToeGravity:
                 return True
         return False
 
+    # Make a move
     def makeMove(self, r, c, s):
         if self.board[0][c] != Sign.EMPTY:
             print("Column is full. Please choose another column.")
@@ -48,6 +51,7 @@ class TicTacToeGravity:
                     self.res = ResDom.TIE
                 return True
 
+    # When user makes a move
     def moveUser(self):
         if self.status == Status.TURN_USER:
             if self.board[self.uSelRow][self.uSelCol] == Sign.EMPTY:
@@ -56,6 +60,7 @@ class TicTacToeGravity:
             else:
                 print("Invalid move! The selected position is already occupied.")
 
+    # When computer makes a move
     def moveComp(self):
         if self.status == Status.TURN_COMP:
             empty_cells = [(r, c) for r in range(3) for c in range(3) if self.board[r][c] == Sign.EMPTY]
@@ -72,6 +77,7 @@ class TicTacToeGravity:
             else:
                 self.moveComp()
     
+#     # Display the board
 #     def displayBoard(self):
 #         for row in self.board:
 #             print("|".join([sign.value for sign in row]))

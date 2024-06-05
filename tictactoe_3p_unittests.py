@@ -1,6 +1,7 @@
 import unittest
 from tictactoe_3p import TicTacToe3P, Sign, Status, ResDom, ActionDomain
 
+
 class TestTicTacToe3P(unittest.TestCase):
     # test tictactoe 3p board initialization
     def test_initialization(self):

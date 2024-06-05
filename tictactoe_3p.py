@@ -2,7 +2,6 @@ from tictactoe_3p_states import Sign, Status, ActionDomain, ResDom
 import random
 
 
-
 # Tic-Tac-Toe game class
 class TicTacToe3P:
     # Initialize game with three players and 4x4 board
@@ -47,6 +46,7 @@ class TicTacToe3P:
 
         return False
 
+    # Make a move
     def makeMove(self, r, c, s):
         self.board[r][c] = s
         self.numOfMoves += 1
@@ -62,6 +62,7 @@ class TicTacToe3P:
         elif self.numOfMoves == 16:
             self.res = ResDom.TIE
 
+    # When user makes a move
     def moveUser(self):
         if self.status == Status.TURN_USER:
             if self.board[self.uSelRow][self.uSelCol] == Sign.EMPTY:
@@ -70,6 +71,7 @@ class TicTacToe3P:
             else:
                 print("Invalid move! The selected position is already occupied.")
 
+    # When computer makes a move
     def moveComp(self):
         if self.status == Status.TURN_COMP1:
             empty_cells = [(r, c) for r in range(4) for c in range(4) if self.board[r][c] == Sign.EMPTY]
@@ -77,7 +79,6 @@ class TicTacToe3P:
                 r, c = random.choice(empty_cells)
                 self.makeMove(r, c, Sign.NOUGHT)
                 self.status = Status.TURN_COMP2
-
 
         elif self.status == Status.TURN_COMP2:
             empty_cells = [(r, c) for r in range(4) for c in range(4) if self.board[r][c] == Sign.EMPTY]
@@ -93,7 +94,8 @@ class TicTacToe3P:
                 self.moveUser()
             else:
                 self.moveComp()
-    
+                
+#     # Display the board
 #     def displayBoard(self):
 #         for row in self.board:
 #             print("|".join([sign.value for sign in row]))

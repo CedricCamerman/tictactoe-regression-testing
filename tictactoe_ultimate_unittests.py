@@ -3,6 +3,7 @@ import unittest
 from tictactoe_ultimate import UltimateTicTacToe
 from tictactoe import Sign, Status, ActionDomain, ResDom
 
+
 class TestUltimateTicTacToe(unittest.TestCase):
     # test ultimate tictactoe board initialization
     def test_initialization(self):
@@ -74,6 +75,10 @@ class TestUltimateTicTacToe(unittest.TestCase):
                                   [Sign.NOUGHT, Sign.EMPTY, Sign.NOUGHT],
                                   [Sign.CROSS, Sign.NOUGHT, Sign.CROSS]]
         game.makeMove(2, 2, 0, 1, Sign.CROSS)
+        game.uSelBoardrow = 0
+        game.uSelBoardcol = 1
+        game.uSelRow = 1
+        game.uSelCol = 1
         game.main()
         self.assertEqual(game.res, ResDom.U_WON)
 

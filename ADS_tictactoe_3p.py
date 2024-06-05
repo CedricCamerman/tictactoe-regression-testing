@@ -1,11 +1,9 @@
-import copy
-from board_to_string_3p import string_to_board
-from tictactoe_3p import ActionDomain, ResDom
+from tictactoe_3p import ResDom
 import itertools
 import time
 import random
 
-# five minute runtime
+
 class ADS:
     def __init__(self):
         self.Q0 = '________________'
@@ -13,13 +11,9 @@ class ADS:
         self.TrA = {}
         self.keylist = [] # keep a spare list of boards that have the selected amount of empty tiles for efficiency in MCT
 
-    def initialize_Q0(self):
-        all_combinations = [''.join(combination) for combination in itertools.product('XO_', repeat=16)]
-        return all_combinations
-
+    # Find as many transitions as possible
     def find_subsets(self):
         start_time = time.time()
-        # end_time = start_time + 5 * 60
 
         # Step 1: Initialize Q
         Q_init = [self.Q0]
@@ -131,10 +125,6 @@ class ADS:
             
             if empty_tiles_amount == E:
                 print(f"ADS generation time for {E} empty_tiles, ADS length of {len(self.TrA)}, time of {time.time() - start_time}")
-                total_transitions = 0
-                for key in self.TrA:
-                    total_transitions += len(self.TrA[key]['transitions'])
-                print(total_transitions)
                 break
             empty_tiles_amount += 1
             if turn == 0:
@@ -143,15 +133,15 @@ class ADS:
                 turn = 0
             else:
                 turn = 1
-            
-            
-
+              
+    # Get the successor state and the resulting state
     def next_state(self, board, tile, user_turn):
         sign = 'X' if user_turn == 0 else 'O' if user_turn == 1 else '/'
         successor = self.swap_character(board, tile, sign)
         result_state = self.get_result_state(successor)
         return successor, result_state
 
+    # Swap a sign in the board
     def swap_character(self, s, index, new_char):
         if index < 0 or index >= len(s):
             raise ValueError("Index out of range")
@@ -159,6 +149,7 @@ class ADS:
         s_list[index] = new_char
         return ''.join(s_list)
 
+    # Check if there is a winner
     def check_winner(self, board, sign):
         # Check rows
         for row in range(4):
@@ -188,6 +179,7 @@ class ADS:
             
         return False      
     
+    # Get the resulting state
     def get_result_state(self, board):
         if self.check_winner(board, 'X'):
             return ResDom.U_WON
@@ -200,5 +192,6 @@ class ADS:
         else:
             return ResDom.PLAYING
 
-ab = ADS()
-ab.find_subsets()
+
+# ab = ADS()
+# ab.find_subsets()

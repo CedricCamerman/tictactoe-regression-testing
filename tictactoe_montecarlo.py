@@ -1,10 +1,13 @@
 import random
 from collections import defaultdict, deque
+from time import time
 import numpy as np
 from tictactoe import TicTacToe, Sign, Status, ActionDomain, ResDom
 from ADS_tictactoe import ADS
 from board_to_string import board_to_string
 
+
+# Monte Carlo testing class
 class MonteCarloTester:
     def __init__(self, num_runs, initial_sequences=10):
         self.num_runs = num_runs
@@ -25,10 +28,12 @@ class MonteCarloTester:
             'user_win': deque(maxlen=self.adjusted_maxlen)
         }
 
+    # Record the transition from one state to another
     def record_transition(self, before_state, after_state):
         self.transition_counts[before_state][after_state] += 1
         self.total_transitions[before_state] += 1
 
+    # Predict the next state based on the current state
     def predict_state(self, current_state):
         if current_state not in self.transition_counts:
             return None
@@ -37,6 +42,7 @@ class MonteCarloTester:
         probabilities = {state: count / total for state, count in transitions.items()}
         return max(probabilities, key=probabilities.get)
 
+    # Simulate a random sequence of moves in the game
     def test_sequence(self, game, seq):
         user_passed = 0
         user_failed = 0
@@ -52,11 +58,15 @@ class MonteCarloTester:
         ADS_false = 0
         ADS_tests = 0
 
+        # Run the game until it ends
         while game.res == ResDom.PLAYING:
+
+            # Record the state before the move
             before_state = self.serialize_game_state(game)
             before_state_string = board_to_string(game.board)
             predicted_next_state = self.predict_state(before_state)
             
+            # Select a random move
             if game.status == Status.TURN_USER:
                 game.uSelRow, game.uSelCol = random.choice([(r, c) for r in range(3) for c in range(3) if game.board[r][c] == Sign.EMPTY])
                 game.action = ActionDomain.U_MOVE
@@ -66,11 +76,14 @@ class MonteCarloTester:
             currentmoves = game.numOfMoves
             empty_cells = [(r, c) for r in range(3) for c in range(3) if game.board[r][c] == Sign.EMPTY]
 
+            # Make the move
             game.main()
 
+            # Record the state after the move
             after_state = self.serialize_game_state(game)
             self.record_transition(before_state, after_state)
 
+            # Record the prediction result
             result_type = 'total'
             if game.res == ResDom.TIE:
                 result_type = 'draw'
@@ -87,6 +100,7 @@ class MonteCarloTester:
             
             total_predictions[result_type] += 1
 
+            # Check if the user move was valid
             if game.action == ActionDomain.U_MOVE:
                 try:
                     assert game.board[game.uSelRow][game.uSelCol] == Sign.CROSS
@@ -99,6 +113,7 @@ class MonteCarloTester:
                 except AssertionError:
                     user_failed += 1
 
+            # Check if the CPU move was valid
             if game.action == ActionDomain.C_MOVE:
                 try:
                     assert game.status == Status.TURN_USER
@@ -110,6 +125,7 @@ class MonteCarloTester:
                 except AssertionError:
                     cpu_failed += 1
 
+            # Check if the board state is valid
             try:
                 assert all(cell in {Sign.CROSS, Sign.NOUGHT, Sign.EMPTY} for row in game.board for cell in row)
                 assert abs(sum(row.count(Sign.CROSS) - row.count(Sign.NOUGHT) for row in game.board)) <= 1
@@ -119,11 +135,15 @@ class MonteCarloTester:
 
             # ADS test
             try:
-                transitions = seq.TrA[before_state_string]['transitions']
+                transitions = []
+                if before_state_string in seq.TrA.keys():
+                    transitions = seq.TrA[before_state_string]['transitions']
+
                 # transitions is a list of 4-tuples: (tile (0-9), user_turn boolean, game result, next state)
-                # assert that the next state is in the list of possible transitions
+                # assert that the next state is in the list of possible successors
                 assert board_to_string(game.board) in [transition[3] for transition in transitions]
-                # assign that element of the list to the variable 'transition'
+
+                # assert that the inputs and outputs match the transition
                 transition = next(transition for transition in transitions if transition[3] == board_to_string(game.board))
                 if transition[1]:
                     assert game.status == Status.TURN_COMP
@@ -133,7 +153,6 @@ class MonteCarloTester:
                 assert game.res == transition[2]
                 ADS_true += 1
             except AssertionError:
-                print(f"ADS test failed for state: {before_state_string} and transitions: {transitions}")
                 ADS_false += 1
             ADS_tests += 1
         
@@ -143,20 +162,24 @@ class MonteCarloTester:
             correct_predictions, total_predictions, ADS_true, ADS_false, ADS_tests
         )
 
+    # Serialize the game state to a hashable format
     def serialize_game_state(self, game):
         return (tuple(tuple(cell.value for cell in row) for row in game.board), game.status.value, game.res.value)
     
+    # Update the variance of the recent predictions
     def update_variance(self):
         for key in self.results_variance:
             if len(self.recent_predictions[key]) > 10:  # Ensure enough data for variance calculation
                 var = np.var([float(pred) for pred in self.recent_predictions[key]])
                 self.results_variance[key].append(var)
 
+    # Calculate the reliability of the predictions
     def calculate_reliability(self, predictions):
         if not predictions:
             return 0.0
         return (sum(predictions) / len(predictions)) * 100
     
+    # Calculate the stability of the predictions
     def calculate_stability(self):
         stability_scores = {}
         for key, variances in self.results_variance.items():
@@ -165,7 +188,9 @@ class MonteCarloTester:
                 stability_scores[key] = 100 - (mean_variance * 100)  # Convert variance to a reliability score
         return stability_scores
 
+    # Run the test suite
     def test_suite(self):
+        start_time = time()
         sc_passed = 0
         sc_failed = 0
         others_passfail = [[0, 0], [0, 0], [0, 0]]  # [usermove, cpumove, boardvalid]
@@ -181,7 +206,9 @@ class MonteCarloTester:
         ADS_true = 0
         ADS_false = 0
         ADS_tests = 0
-        for i in range(self.num_runs):
+
+        # Run N games
+        for N in range(self.num_runs):
             game = TicTacToe()
             (
                 user_pass, user_fail, cpu_pass, cpu_fail, board_pass, board_fail, 
@@ -219,10 +246,11 @@ class MonteCarloTester:
                     assert all(game.board[r][c] != Sign.EMPTY for r in range(3) for c in range(3)), "Tie but empty cells left"
                     tie += 1
             except AssertionError as e:
-                print(f"Test failed with error: {str(e)}")
+                # print(f"Test failed with error: {str(e)}")
                 sc_failed += 1
                         
-
+        # Print the results
+        print(f"Time taken: {time() - start_time:.2f} seconds")
         print(f"Tests passed: {sc_passed + others_passfail[0][0] + others_passfail[1][0] + others_passfail[2][0]}")
         print(f"Tests failed: {sc_failed + others_passfail[0][1] + others_passfail[1][1] + others_passfail[2][1]}")
         print("")
@@ -239,7 +267,7 @@ class MonteCarloTester:
         print(f"ADS tests failed: {ADS_false}")
         print(f"ADS tests total: {ADS_tests}")
         print("")
-        print(f"Total runs: {i+1}")
+        print(f"Total runs: {N+1}")
         # rel_values = []
         for key, value in results.items():
             if value['total'] > 0:
@@ -261,7 +289,6 @@ class MonteCarloTester:
         # return stab_values
 
 
-
 # Run the test suite
-tester = MonteCarloTester(1)
+tester = MonteCarloTester(1000)
 tester.test_suite()

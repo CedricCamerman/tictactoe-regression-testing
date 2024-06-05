@@ -5,6 +5,11 @@ import numpy as np
 # from tictactoe_3p_montecarlo import test_suite
 # from tictactoe_ultimate_montecarlo import test_suite
 
+
+############################################################################################################
+# This file was used to gather data for the thesis. It is not used in the actual program.
+############################################################################################################
+
 def run_simulations(N):
     # Dummy function to simulate running simulations and returning prediction reliability scores
     # Replace this with the actual function that runs the simulations and returns the scores

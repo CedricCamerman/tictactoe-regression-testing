@@ -3,6 +3,7 @@ import unittest
 from tictactoe_gravity_states import Sign, Status, ActionDomain, ResDom
 from tictactoe_gravity import TicTacToeGravity
 
+
 class TestTicTacToeGravity(unittest.TestCase):
     # test tictactoe gravity board initialization
     def test_initialization(self):

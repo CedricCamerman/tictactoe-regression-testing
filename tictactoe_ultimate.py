@@ -1,6 +1,6 @@
 import random
-
 from tictactoe import TicTacToe, Sign, Status, ActionDomain, ResDom
+
 
 # Tic-Tac-Toe game class
 class UltimateTicTacToe:
@@ -15,6 +15,7 @@ class UltimateTicTacToe:
         self.res = ResDom.PLAYING
         self.numOfMoves = 0
 
+    # Winning conditions
     def winOnRow(self, r, c, s):
         if s == Sign.CROSS:
             return all(self.board[r][col].res == ResDom.U_WON for col in range(3))
@@ -43,6 +44,7 @@ class UltimateTicTacToe:
             else:
                 return False
 
+    # Make a move
     def makeMove(self, br, bc, r, c, s):
         self.numOfMoves += 1
         self.board[br][bc].makeMove(r, c, s)
@@ -55,6 +57,7 @@ class UltimateTicTacToe:
         elif self.numOfMoves == 81 or all(self.board[br][bc].res != ResDom.PLAYING for br in range(3) for bc in range(3)):
             self.res = ResDom.TIE
 
+    # When user makes a move
     def moveUser(self):
         if self.status == Status.TURN_USER:
             if self.board[self.uSelBoardrow][self.uSelBoardcol].res == ResDom.PLAYING and self.board[self.uSelBoardrow][self.uSelBoardcol].board[self.uSelRow][self.uSelCol] == Sign.EMPTY:
@@ -63,6 +66,7 @@ class UltimateTicTacToe:
             else:
                 print("Invalid move! The selected position is already occupied or board is already finished.")
 
+    # When computer makes a move
     def moveComp(self):
         if self.status == Status.TURN_COMP:
             # Find whether there are empty cells
@@ -85,6 +89,7 @@ class UltimateTicTacToe:
             else:
                 self.moveComp()
 
+#     # Display the board
 #     def displayBoard(self):
 #         for i in range(3):
 #             for _ in range(3):  # For each row in the inner 3x3 board

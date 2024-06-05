@@ -13,6 +13,7 @@ class TicTacToe:
         self.res = ResDom.PLAYING
         self.numOfMoves = 0
 
+    # Winning conditions
     def winOnRow(self, r, c, s):
         return all(self.board[r][col] == s for col in range(3))
 
@@ -28,6 +29,7 @@ class TicTacToe:
                 return True
         return False
 
+    # Make a move
     def makeMove(self, r, c, s):
         self.board[r][c] = s
         self.numOfMoves += 1
@@ -41,6 +43,7 @@ class TicTacToe:
         elif self.numOfMoves == 9:
             self.res = ResDom.TIE
 
+    # When user makes a move
     def moveUser(self):
         if self.status == Status.TURN_USER:
             if self.board[self.uSelRow][self.uSelCol] == Sign.EMPTY:
@@ -49,6 +52,7 @@ class TicTacToe:
             else:
                 print("Invalid move! The selected position is already occupied.")
 
+    # When computer makes a move
     def moveComp(self):
         if self.status == Status.TURN_COMP:
             empty_cells = [(r, c) for r in range(3) for c in range(3) if self.board[r][c] == Sign.EMPTY]
@@ -65,6 +69,7 @@ class TicTacToe:
             else:
                 self.moveComp()
     
+    # # Display the board
     # def displayBoard(self):
     #     for row in self.board:
     #         print("|".join([sign.value for sign in row]))

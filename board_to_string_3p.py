@@ -1,5 +1,7 @@
-from tictactoe_3p import Sign, Status, ActionDomain, ResDom
+from tictactoe_3p import Sign
 
+
+# board to string
 def board_to_string(board):
     # Convert the board to a string representation on a single line. empty = '_', cross = 'X', nought = 'O'
     board_str = ''

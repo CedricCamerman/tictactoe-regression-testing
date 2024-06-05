@@ -1,5 +1,7 @@
-from tictactoe_ultimate import Sign, Status, ActionDomain, ResDom
+from tictactoe_ultimate import Sign, ResDom
 
+
+# board to string lower boards
 def board_to_stringa(board):
     # Convert the board to a string representation on a single line. empty = '_', cross = 'X', nought = 'O'
     board_str = ''
@@ -13,6 +15,7 @@ def board_to_stringa(board):
                 board_str += 'O'
     return board_str
 
+# board to string upper board
 def board_to_stringb(result):
     # Convert the board to a string representation on a single line.
     board_str = ''
@@ -26,6 +29,7 @@ def board_to_stringb(result):
         board_str += '-'
     return board_str
 
+# board to string upper board, row and column based
 def board_to_stringc(board):
     # Convert the board to a string representation on a single line.
     board_str = ''

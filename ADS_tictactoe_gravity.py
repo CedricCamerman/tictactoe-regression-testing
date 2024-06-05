@@ -1,17 +1,11 @@
-import copy
-from board_to_string import string_to_board
-from tictactoe_gravity import ActionDomain, ResDom
-import itertools
+from tictactoe_gravity import ResDom
 
 class ADS:
     def __init__(self):
         self.Q0 = '_________'
         self.TrA = {}
 
-    def initialize_Q0(self):
-        all_combinations = [''.join(combination) for combination in itertools.product('XO_', repeat=9)]
-        return all_combinations
-
+    # Find all transitions
     def find_subsets(self):
         Qk = [self.Q0]
         self.TrA[self.Q0] = {'transitions': []}
@@ -37,12 +31,14 @@ class ADS:
 
             Qk = Qj_plus_1
 
+    # Get the successor state and the resulting state
     def next_state(self, board, tile, user_turn):
         index = self.find_lowest_empty_cell(board, tile)
         successor = self.swap_character(board, index, 'X' if user_turn else 'O')
         result_state = self.get_result_state(successor)
         return successor, result_state
     
+    # Find the lowest empty cell in the column
     def find_lowest_empty_cell(self, board, tile):
         # Determine the column index (0, 1, or 2)
         col = tile % 3
@@ -54,6 +50,7 @@ class ADS:
             if board[index] == '_':
                 return index
 
+    # Swap a sign in the board
     def swap_character(self, s, index, new_char):
         if index < 0 or index >= len(s):
             raise ValueError("Index out of range")
@@ -61,6 +58,7 @@ class ADS:
         s_list[index] = new_char
         return ''.join(s_list)
 
+    # Check if there is a winner
     def check_winner(self, board, sign):
         win_conditions = [
             [board[0], board[3], board[6]],
@@ -74,6 +72,7 @@ class ADS:
         ]
         return [sign, sign, sign] in win_conditions
     
+    # Get the resulting state
     def get_result_state(self, board):
         if self.check_winner(board, 'X'):
             return ResDom.U_WON

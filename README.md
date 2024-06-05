@@ -20,20 +20,13 @@
 </ul> </details>
 
 ### :dart: Features
-- Unit tests generated with GitHub Copilot
-- Monte Carlo simulation Testing
-- Reliability metrics
-- Adaptive Distinguishing Sequences
-- Pynguin tests
-
-
-### :art: Color Reference
-| Color | Hex |
-| --------------- | ---------------------------------------------------------------- |
-| Primary Color | ![#061922](https://via.placeholder.com/10/061922?text=+) #061922 |
-| Secondary Color | ![#393E46](https://via.placeholder.com/10/393E46?text=+) #393E46 |
-| Accent Color | ![#00ADB5](https://via.placeholder.com/10/00ADB5?text=+) #00ADB5 |
-| Text Color | ![#EEEEEE](https://via.placeholder.com/10/EEEEEE?text=+) #EEEEEE |
+- A non-deterministic state machine-based Tic-Tac-Toe game: tictactoe.py
+- Three non-deterministic state machine-based Tic-Tac-Toe updates: tictactoe_gravity.py, tictactoe_3p.py, tictactoe_ultimate.py
+- Unit tests generated with GitHub Copilot: tictactoe<_version>_unittests.py
+- Monte Carlo simulation Testing: tictactoe<_version>_montecarlo.py
+- Reliability metrics: tictactoe<_version>_montecarlo.py
+- Adaptive Distinguishing Sequences: ADS_tictactoe<_version>.py
+- Pynguin tests: /pynguin
 
 ## :toolbox: Getting Started
 

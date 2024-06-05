@@ -3,6 +3,7 @@ import unittest
 from tictactoe_states import Sign, Status, ActionDomain, ResDom
 from tictactoe import TicTacToe
 
+
 # create a test class
 class TestTicTacToe(unittest.TestCase):
     # test tictactoe board initialization

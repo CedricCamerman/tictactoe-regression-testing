@@ -1,6 +1,6 @@
-from tictactoe_ultimate import ActionDomain, ResDom
-import itertools
+from tictactoe_ultimate import ResDom
 import time
+
 
 class ADS:
     def __init__(self):
@@ -10,14 +10,13 @@ class ADS:
         self.TrA = {}
         self.TrB = {}
 
-    def initialize_Q0(self):
-        all_combinations = [''.join(combination) for combination in itertools.product('XO_', repeat=9)]
-        return all_combinations
-
+    # find all transitions
     def find_subsets(self):
         start_time = time.time()
         Qk = [self.Q0]
         self.TrA[self.Q0] = {'transitions': []}
+
+        # Transitions of smaller boards
         while True:
             Qj_plus_1 = []  # list of all states in Qj+1
             for A in Qk:
@@ -35,7 +34,7 @@ class ADS:
 
             Qk = Qj_plus_1
         
-        # Transitions of smaller boards complete. Now we need to find transitions for the larger board           
+        # Transitions of smaller boards complete. Now to find transitions for the larger board           
         Pk = [self.P0]
         self.TrB[self.P0] = {'transitions': [(ResDom.PLAYING, self.P0)]}
         while True:
@@ -53,22 +52,17 @@ class ADS:
                                 self.TrB[B]['transitions'].append((s_output, successor))
             if len(Pj_plus_1) == 0:
                 print(f"Time taken: {time.time() - start_time}, ads length lower boards: {len(self.TrA)}, ads length upper boards: {len(self.TrB)}")
-                total_transitions_l = 0
-                total_transitions_u = 0
-                for key in self.TrA:
-                    total_transitions_l += len(self.TrA[key]['transitions'])
-                for key in self.TrB:
-                    total_transitions_u += len(self.TrB[key]['transitions'])
-                print(f"Total transitions lower boards: {total_transitions_l}, Total transitions upper boards: {total_transitions_u}")
                 break
 
             Pk = Pj_plus_1
 
+    # Get the successor state and the resulting state of the smaller board
     def next_state(self, board, tile, user_turn):
         successor = self.swap_character(board, tile, 'X' if user_turn else 'O')
         result_state = self.get_result_state(successor)
         return successor, result_state
     
+    # Get the successor state and the resulting state of the larger board
     def next_state_board(self, board, tile, res_type):
         if res_type == ResDom.U_WON:
             char = 'X'
@@ -80,6 +74,7 @@ class ADS:
         result_state = self.get_result_state_board(successor)
         return successor, result_state
 
+    # Swap a sign in the board
     def swap_character(self, s, index, new_char):
         if index < 0 or index >= len(s):
             raise ValueError("Index out of range")
@@ -87,6 +82,7 @@ class ADS:
         s_list[index] = new_char
         return ''.join(s_list)
 
+    # Check if there is a winner
     def check_winner(self, board, sign):
         win_conditions = [
             [board[0], board[3], board[6]],
@@ -100,6 +96,7 @@ class ADS:
         ]
         return [sign, sign, sign] in win_conditions
 
+    # Get the resulting state of the smaller board
     def get_result_state(self, board):
         if self.check_winner(board, 'X'):
             return ResDom.U_WON
@@ -109,7 +106,8 @@ class ADS:
             return ResDom.TIE
         else:
             return ResDom.PLAYING
-        
+    
+    # Get the resulting state of the larger board
     def get_result_state_board(self, board):
         if self.check_winner(board, 'X'):
             return ResDom.U_WON
